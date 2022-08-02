@@ -1,0 +1,5 @@
+# python3 -m pip install --user -U -r requirements_local_tests.txt
+
+pytest==6.2.5
+pytest-black==0.3.12
+flake8==4.0.1
