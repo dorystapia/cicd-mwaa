@@ -1,0 +1,29 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Sync Airflow DAGs
+
+on:
+  workflow_run:
+    workflows:
+      - 'Test DAGs'
+    types:
+      - completed
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  deploy:
+    name: Airflow_Dags
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@stage 
+      - uses: airflow_components@stage 
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-1'
+          SOURCE_DIR: 'dags'
+          DEST_DIR: 'dags'
