@@ -1,0 +1,39 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Test Airflow DAGs
+
+on:
+  push:
+    paths:
+      - 'dags/**'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.7'
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements/requirements.txt
+        pip check
+    - name: Lint DAGs with Flake8
+      run: |
+        pip install flake8=={version}
+        flake8 --ignore E501 dags --benchmark -v
+    - name: Confirm Black code compliance fo DAGs
+      run: |
+        pip install pytest-black=={version}
+        pytest dags --black -v
+    - name: Test Airflow DAGs with Pytest
+      run: |
+        pip install pytest=={version}
+        cd tests || exit
+        pytest tests.py -v
